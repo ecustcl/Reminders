@@ -1,13 +1,18 @@
 package com.apress.gerber.reminders;
 
+import android.app.Dialog;
 import android.database.Cursor;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class RemindersActivity extends AppCompatActivity {
 
@@ -58,6 +63,40 @@ public class RemindersActivity extends AppCompatActivity {
         // the cursorAdapter (controller) is now updating the listView (view)
         //with data from the db (model)
         mListView.setAdapter(mCursorAdapter);
+
+        //when we click an individual item in the listview
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int masterListPosition, long id) {
+                //Toast.makeText(RemindersActivity.this, "clicked " + position,
+                //        Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(RemindersActivity.this);
+                ListView modeListView = new ListView(RemindersActivity.this);
+                String[] modes = new String[] { "Edit Reminder", "Delete Reminder" };
+                ArrayAdapter<String> modeAdapter = new ArrayAdapter<>(RemindersActivity.this,
+                        android.R.layout.simple_list_item_1, android.R.id.text1, modes);
+                modeListView.setAdapter(modeAdapter);
+                builder.setView(modeListView);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //edit reminder
+                        if (position == 0) {
+                            Toast.makeText(RemindersActivity.this, "edit "
+                                    + masterListPosition, Toast.LENGTH_SHORT).show();
+                            //delete reminder
+                        } else {
+                            Toast.makeText(RemindersActivity.this, "delete "
+                                    + masterListPosition, Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
 
         /*
         //The arrayAdatper is the controller in our
@@ -116,4 +155,5 @@ public class RemindersActivity extends AppCompatActivity {
             return false;
         }
     }
+
 }
